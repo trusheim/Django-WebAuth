@@ -27,7 +27,7 @@ function generateNonce($length) {
         return $key;
 }
 
-$protocol = "WA_1";
+$protocol = "WA_2";
 
 $sunetId = $_SERVER['WEBAUTH_USER'];
 $sunetId_64 = base64_encode($sunetId);
@@ -38,6 +38,9 @@ $nonce = generateNonce(16);
 $hash = sha1($SHARED_SECRET . $nonce . $sunetId);
 $hashStr = $nonce . '$' . $hash;
 
-$from = $_GET['from'];
+$return = $_GET['return'];
 
-header("Location: $from&WA_prot=$protocol&WA_user=$sunetId_64&WA_hash=$hashStr&WA_name=$displayName_64");
+$next = $_GET['next'];
+$next_64 = base64_encode($next);
+
+header("Location: $return?WA_prot=$protocol&WA_user=$sunetId_64&WA_hash=$hashStr&WA_name=$displayName_64&WA_next=$next_64");

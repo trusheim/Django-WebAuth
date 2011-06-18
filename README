@@ -17,12 +17,16 @@ Installation:
       Stanford, and you'll have to put it in the cgi-bin root)
     - Make sure you add the .htaccess file (rename to .htaccess)
     - Edit your Django settings to add:
-        INSTALLED_APPS = ( ... 'webauth' ...)
-        MIDDLEWARE_CLASSES = ( ... 'webauth.middleware.WebauthMiddleware' ...)
+        INSTALLED_APPS = ( ... 'webauth' ... )
+        MIDDLEWARE_CLASSES = ( ... 'webauth.middleware.WebauthMiddleware' ... )
         SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+        LOGIN_URL = '/webauth/login/'
         WEBAUTH_SHARED_SECRET = 'YOUR_SECRET_KEY'
         WEBAUTH_URL = 'https://www.stanford.edu/~(YOUR USER ACCOUNT)/cgi-bin/wa-authenticate.php'
     - Remove the standard Django auth middleware.
+    - In urls.py, add:
+        admin.site.login_template = 'webauth/admin_redirect.html'
+        urlpatterns = patterns('', ... (r'^webauth/',include('events.webauth.urls')), ... )
     - Important: if you are in a production environment, DO NOT install wa-authenticate-test.php, and DO NOT install
       your shared secret into that script; otherwise, malicious users can use that script to login as anyone!
 

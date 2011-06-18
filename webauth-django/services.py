@@ -3,7 +3,7 @@ from django.conf import settings
 from models import WebauthUser
 from django.contrib.auth.models import User
 
-WEBAUTH_VERSION = "WA_1"
+WEBAUTH_VERSION = "WA_2"
 
 class WebauthVersionNotSupported(Exception):
     """
