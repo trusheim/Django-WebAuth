@@ -1,6 +1,6 @@
 <?php
 
-$SHARED_SECRET = 'a2d24bf589b1dea3d83f317019e2ff83bf430b8d1c2a3f741dbf7d72f196d8cf6a6d113de356dc77';
+$SHARED_SECRET = 'FILL_ME';
 
 function generateNonce($length) {
         $charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
