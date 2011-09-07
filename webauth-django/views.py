@@ -52,7 +52,7 @@ def login(request):
         # redirect to the new URL, which should not be the login URL
         if next == reverse('webauth.views.login'):
             next = ''
-        if next[0] == '/':
+        if len(next) > 0 and next[0] == '/':
             next = next[1:]
 
         return HttpResponseRedirect(settings.BASE_URL + next)
