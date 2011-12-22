@@ -23,6 +23,7 @@ Installation:
         LOGIN_URL = '/webauth/login/'
         WEBAUTH_SHARED_SECRET = 'YOUR_SECRET_KEY'
         WEBAUTH_URL = 'https://www.stanford.edu/~(YOUR USER ACCOUNT)/cgi-bin/wa-authenticate.php'
+        BASE_URL = ' .... '
     - Remove the standard Django auth middleware.
     - In urls.py, add:
         admin.site.login_template = 'webauth/admin_redirect.html'
