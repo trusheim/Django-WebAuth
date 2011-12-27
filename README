@@ -1,3 +1,8 @@
+Django-Webauth 1.0
+=============================
+
+ABOUT
+-----------------------------
 This set of scripts is designed to allow Django apps to use Stanford WebAuth without actually having to have WebAuth
 installed on the local server. The script uses hashing with symmetric keys (which must be kept secret for security)
 to make sure a user has been validated on the remote end.
@@ -11,7 +16,8 @@ is not desired behavior (e.g., you want a site to be closed to approved users, a
 to change the middleware so that it does not auto-create user accounts, or alternatively give your subset of authorized
 users a specific privilege that is basically "global site privilege".
 
-Installation:
+INSTALLATION
+-----------------------------
     - Choose a SHARED_SECRET and put that in the webauth-host/wa-authenticate.php script
     - Install the wa-authenticate.php script in a Stanford WWW cgi-bin directory (you'll have to request this from
       Stanford, and you'll have to put it in the cgi-bin root)
@@ -31,6 +37,8 @@ Installation:
     - Important: if you are in a production environment, DO NOT install wa-authenticate-test.php, and DO NOT install
       your shared secret into that script; otherwise, malicious users can use that script to login as anyone!
 
+EXAMPLES
+-----------------------------
 Typical request cycle:
     - User requests protected on the Django site
     - Request is caught in a decorator, and passed to the login action
@@ -40,6 +48,14 @@ Typical request cycle:
     - Hosted PHP script redirects back to Django server with the hashed information
     - Django server checks hash with shared secret, and logs user in if they're all cool.
 
-TODO:
+TODO
+-----------------------------
     - Support LDAP user access group passing (i.e. suPrivilegeGroup and suAffiliation)
     - Support arbitrary LDAP data passing (data is very limited by Stanford www-data user privileges)
+
+COPYRIGHT
+-----------------------------
+Copyright 2010-11 Stephen Trusheim. All rights reserved. No warranties granted.
+This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of
+this license, visit http://creativecommons.org/licenses/by/3.0/ or send a letter to
+Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
