@@ -7,6 +7,7 @@
  * is annoying to setup.
  *
  * Be sure to change the $SHARED_SECRET!
+ * Be sure to set the $RETURN_URL (e.g. http://django_site.com/webauth/login)
  *
  * Maintained by: Stephen Trusheim (tru@sse.stanford)
  * Original Author: Quinn Slack (sqs@cs.stanford)
@@ -14,6 +15,7 @@
 
 
 $SHARED_SECRET = 'FILL_ME';
+$RETURN_URL = 'FILL_ME';
 
 // ---------------------------------------------
 
@@ -38,9 +40,10 @@ $nonce = generateNonce(16);
 $hash = sha1($SHARED_SECRET . $nonce . $sunetId);
 $hashStr = $nonce . '$' . $hash;
 
-$return = $_GET['return'];
+// v.1.1: this URL is ignored except in development mode.
+// $return = $_GET['return'];
 
 $next = $_GET['next'];
 $next_64 = base64_encode($next);
 
-header("Location: $return?WA_prot=$protocol&WA_user=$sunetId_64&WA_hash=$hashStr&WA_name=$displayName_64&WA_next=$next_64");
+header("Location: $RETURN_URL?WA_prot=$protocol&WA_user=$sunetId_64&WA_hash=$hashStr&WA_name=$displayName_64&WA_next=$next_64");
