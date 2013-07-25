@@ -17,7 +17,7 @@ def _make_hash(string):
     m.update(string)
     return m.hexdigest()
 
-def WebauthLogin(request, version, username, hashString, full_name=None):
+def WebauthLogin(request, version, username, hashString, name_base64=None, name=None):
     """
     Completes the login process for a Webauth user; checks the hash + nonce to ensure the user should be able to login,
     then sets the appropriate parameter so that the middleware logs in the user.
@@ -28,13 +28,13 @@ def WebauthLogin(request, version, username, hashString, full_name=None):
         raise WebauthVersionNotSupported
 
     (nonce, provided_hash) = hashString.split('$')
-    expected_hash = _make_hash(settings.WEBAUTH_SHARED_SECRET + nonce + username)
+    expected_hash = _make_hash(settings.WEBAUTH_SHARED_SECRET + nonce + username + name_base64)
 
     if expected_hash == provided_hash:
         # create Django user for the WebAuth'd person if they don't exist
         # session will not be active till next pageload
         if WebauthUser.objects.filter(username__exact=username).count() == 0:
-            WebauthCreate(username, full_name)
+            WebauthCreate(username, name)
 
         request.session['wa_username'] = username
         return True

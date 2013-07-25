@@ -37,7 +37,7 @@ $displayName_64 = base64_encode($_SERVER['WEBAUTH_LDAP_DISPLAYNAME']);
 
 $nonce = generateNonce(16);
 
-$hash = sha1($SHARED_SECRET . $nonce . $sunetId);
+$hash = sha1($SHARED_SECRET . $nonce . $sunetId . $displayName_64);
 $hashStr = $nonce . '$' . $hash;
 
 // v.1.1: this URL is ignored except in development mode.

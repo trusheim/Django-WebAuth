@@ -27,7 +27,7 @@ $displayName_64 = base64_encode($displayName);
 
 $nonce = generateNonce(16);
 
-$hash = sha1($SHARED_SECRET . $nonce . $sunetId);
+$hash = sha1($SHARED_SECRET . $nonce . $sunetId . $displayName_64);
 $hashStr = $nonce . '$' . $hash;
 
 $return = $_GET['return'];
@@ -37,7 +37,16 @@ $next_64 = base64_encode($next);
 
 $submitted = isset($_GET['continue']);
 if (!$submitted) {
-    print "<form method = 'GET' action = ''>Return: <input type = 'text' name = 'return' value = '$return' size = 100><br />Next: <input type = 'text' name = 'next' value = '$next' size = 100><br />Login: <input type = 'text' name = 'login_as' value = '$sunetId' /><br />DName: <input type = 'text' name = 'display_name' value = '$displayName' /><br /><input type = 'submit' name = 'continue' value = 'Login'></form>";
+    print<<<ENDL
+<form method = 'GET' action = ''>
+		Return: <input type = 'text' name = 'return' value = '$return' size = 100><br />
+		Next: <input type = 'text' name = 'next' value = '$next' size = 100><br />
+		Login: <input type = 'text' name = 'login_as' value = '$sunetId' /><br />
+		DName: <input type = 'text' name = 'display_name' value = '$displayName' /><br />
+		<input type = 'submit' name = 'continue' value = 'Login'>
+	</form>
+
+ENDL
     exit;
 }
 
