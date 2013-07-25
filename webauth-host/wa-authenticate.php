@@ -29,7 +29,7 @@ function generateNonce($length) {
         return $key;
 }
 
-$protocol = "WA_2";
+$protocol = "WA_3";
 
 $sunetId = $_SERVER['WEBAUTH_USER'];
 $sunetId_64 = base64_encode($sunetId);

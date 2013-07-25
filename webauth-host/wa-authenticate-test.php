@@ -11,7 +11,7 @@ function generateNonce($length) {
         return $key;
 }
 
-$protocol = "WA_2";
+$protocol = "WA_3";
 
 $sunetId = $_GET['login_as'];
 if ($sunetId == '') {
