@@ -3,12 +3,19 @@
 ## About
 This set of scripts is designed to allow Django apps to use Stanford WebAuth without actually having to have WebAuth installed on the local server. The script uses hashing with symmetric keys (which must be kept secret for security) to make sure a user has been validated on the remote end.
 
-This request allows a developer to use standard Django authorization means - including the @login_required decorator, standard user account control for permissions, etc., to authorize users, and uses a script located on a remote server to basically provide the login services.
+This request allows a developer to use standard Django authorization means - including the @login_required decorator, standard user account control for permissions, etc., to authorize users, and uses a script located on a remote server to do the primary steps of authentication.
 
-The middleware is setup to automatically create user accounts for anyone who logs into the site with an SUID. If this is not desired behavior (e.g., you want a site to be closed to approved users, and no one else can login), you'll have to change the middleware so that it does not auto-create user accounts, or alternatively give your subset of authorized users a specific privilege that is basically "global site privilege".
+The middleware is setup to automatically create user accounts for anyone who logs into the site with an SUID. If this is not desired behavior (e.g., you want a site to be closed except to authorized users, and no one else can login), you can either:
+* Change the middleware so that it does not auto-create user accounts, or
+* Create a privilege that functions as "global site privilege" and always check that privilege using @permission_required
 
-## Important update
-v. 1.0 of this script had a **security flaw** that permitted session hijacking attacks. The code has been fixed, and new installation instructions are included below. Please update immediately.
+## Security description
+This script is designed to be easy to install, and does not give the same level of security that you'd receive from directly interacting with the WebAuth service. That said, it is secure to my knowledge as long as:
+* The hosted PHP script cannot be read by other users
+* The Django application (or at least the login page) and the hosted PHP script are both served over HTTPS
+* The shared secret is not leaked
+* The browser does not cache the login URLs
+This implementation does not prevent against replay attacks. This may be fixed in the future, or maybe not.
 
 ## Installation
 
@@ -29,6 +36,7 @@ v. 1.0 of this script had a **security flaw** that permitted session hijacking a
 	* admin.site.login_template = 'webauth/admin_redirect.html'
 	* urlpatterns = patterns('', ... (r'^webauth/', include('webauth.urls')), ... )
 * Important: if you are in a production environment, DO NOT install wa-authenticate-test.php, and DO NOT install your shared secret into that script; otherwise, malicious users can use that script to login as anyone!
+* Important: the Django page (RETURN_URL) must be served over HTTPS. If it is not served over HTTPS, then session hijacking attacks are possible for anyone who can read the URLs requested on the Django server (e.g., anyone who is sniffing local traffic.)
 
 ## Examples
 Here's a typical request cycle:
