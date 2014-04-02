@@ -15,6 +15,7 @@ This script is designed to be easy to install, and does not give the same level 
 * The Django application (or at least the login page) and the hosted PHP script are both served over HTTPS
 * The shared secret is not leaked
 * The browser does not cache the login URLs
+
 This implementation does not prevent against replay attacks. This may be fixed in the future, or maybe not.
 
 ## Installation
