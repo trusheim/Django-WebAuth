@@ -11,10 +11,16 @@ from django.utils.datastructures import MultiValueDictKeyError
 def login(request):
     if not 'WA_user' in request.GET:
         # return URL is this view
+        # This param is ignored except in development mode. 
+        # See wa-authenticate.php for security notes on use of return URL
         return_url = urllib2.quote(settings.BASE_URL[:-1] + reverse('webauth.views.login'))
 
         # next URL is the URL provided. To prevent XSS, this is just the path within the app... if it were
         # anything else, people could do creative attacks to make webauth auth go to a different domain.
+
+        # This is insecure against CSRF attacks, so next URL is simply ignored. If you wish to use
+        # it, it must be validated, e.g. by MACing it or with standard anti-CSRF mechanisms
+
         try:
             next = request.GET['next']
         except MultiValueDictKeyError:
@@ -25,7 +31,7 @@ def login(request):
     else:
         try:
             username_64 = request.GET['WA_user'].strip()
-            actual_hash = request.GET['WA_hash'].strip()
+            mac = request.GET['WA_mac'].strip()
             name_64 = request.GET['WA_name'].strip()
             version = request.GET['WA_prot'].strip()
             next_64 = request.GET['WA_next'].strip()
@@ -38,10 +44,11 @@ def login(request):
 
         username = urllib2.base64.b64decode(username_64).strip()
         name = urllib2.base64.b64decode(name_64).strip()
-        next = urllib2.base64.b64decode(next_64).strip()
+        # next = urllib2.base64.b64decode(next_64).strip()
+        next = ''               # See above security notes on next URL
         
         try:
-            could_login = WebauthLogin(request, version, username, actual_hash, name_64, name)
+            could_login = WebauthLogin(request, mac, version, username_64, username, name_64, name)
         except WebauthVersionNotSupported:
             could_login = False
             

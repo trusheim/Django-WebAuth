@@ -1,4 +1,5 @@
-import hashlib
+from hashlib import sha256
+import hmac
 from django.conf import settings
 from models import WebauthUser
 from django.contrib.auth.models import User
@@ -11,26 +12,25 @@ class WebauthVersionNotSupported(Exception):
     """
     pass
 
-def _make_hash(string):
-    """SHA-1 stub method"""
-    m = hashlib.sha1()
-    m.update(string)
-    return m.hexdigest()
-
-def WebauthLogin(request, version, username, hashString, name_base64=None, name=None):
+def WebauthLogin(request, mac, webauth_version, username_base64, username, name_base64, name):
     """
-    Completes the login process for a Webauth user; checks the hash + nonce to ensure the user should be able to login,
+    Completes the login process for a Webauth user; checks the MAC to ensure the user should be able to login,
     then sets the appropriate parameter so that the middleware logs in the user.
 
     The session will not be active until the middleware runs again (i.e., the next page load.)
     """
-    if version != WEBAUTH_VERSION:
+    if webauth_version != WEBAUTH_VERSION:
         raise WebauthVersionNotSupported
 
-    (nonce, provided_hash) = hashString.split('$')
-    expected_hash = _make_hash(settings.WEBAUTH_SHARED_SECRET + nonce + username + name_base64)
+    expected_mac = hmac.new(settings.WEBAUTH_SHARED_SECRET,
+                            username_base64 + '|' + name_base64 + '|' + webauth_version,
+                            sha256).hexdigest()
 
-    if expected_hash == provided_hash:
+    # Security note: to avoid timing attacks, you should use crypto-specific functions like
+    # hmac.compare_digest to check equality. However, if you're using older versions of Python,
+    # this isn't available, so you'll probably just use == to check equality. If you're using this
+    # code and worried about timing attacks, you're probably doing it wrong.
+    if hmac.compare_digest(mac, expected_mac):
         # create Django user for the WebAuth'd person if they don't exist
         # session will not be active till next pageload
         if WebauthUser.objects.filter(username__exact=username).count() == 0:
