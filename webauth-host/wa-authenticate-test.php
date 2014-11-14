@@ -2,15 +2,6 @@
 
 $SHARED_SECRET = 'test';
 
-function generateNonce($length) {
-        $charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        $key = '';
-        for ($i=0; $i<$length; $i++) {
-            $key .= $charset[(mt_rand(0,(strlen($charset)-1)))];
-        }
-        return $key;
-}
-
 $protocol = "WA_3";
 
 $sunetId = $_GET['login_as'];
@@ -25,10 +16,7 @@ if ($displayName == '') {
 }
 $displayName_64 = base64_encode($displayName);
 
-$nonce = generateNonce(16);
-
-$hash = sha1($SHARED_SECRET . $nonce . $sunetId . $displayName_64);
-$hashStr = $nonce . '$' . $hash;
+$mac = hash_hmac('sha256', $sunetId_64 . '|' . $displayName_64 . '|' . $protocol, $SHARED_SECRET);
 
 $return = $_GET['return'];
 
@@ -50,4 +38,4 @@ ENDL
     exit;
 }
 
-header("Location: $return?WA_prot=$protocol&WA_user=$sunetId_64&WA_hash=$hashStr&WA_name=$displayName_64&WA_next=$next_64");
+header("Location: $return?WA_prot=$protocol&WA_user=$sunetId_64&WA_mac=$mac&WA_name=$displayName_64&WA_next=$next_64");
